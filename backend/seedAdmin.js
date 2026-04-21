@@ -4,7 +4,7 @@ const connectDB = require('./config/db');
 const User = require('./models/User');
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@thefolio.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@1234';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin1234';
 const ADMIN_NAME = process.env.ADMIN_NAME || 'TheFolio Admin';
 const FORCE_SEED = process.argv.includes('--force') || process.argv.includes('-f');
 
