@@ -1,11 +1,11 @@
 // backend/server.js
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
-
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
 
+// Import routes
 const authRoutes = require('./routes/auth.routes');
 const postRoutes = require('./routes/post.routes');
 const commentRoutes = require('./routes/comment.routes');
@@ -13,47 +13,45 @@ const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 
+// --- Database Connection ---
 connectDB();
 
-// ── CORS CONFIGURATION ──
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://thefolio-five.vercel.app'
-];
+// --- CORS Configuration (Keep this as-is) ---
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'https://thefolio-five.vercel.app',
+        'https://thefolio-jxpx.onrender.com' // Allow your own backend URL
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Simple CORS middleware
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
+// --- Middleware ---
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// --- Simple Test Route (Place this BEFORE your other routes) ---
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'OK', message: 'Server is running' });
+});
+
+// --- Your API Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Backend is working!' });
+// --- Global Error Handler (Place this AFTER your routes) ---
+// This will catch any errors and prevent the app from crashing silently.
+app.use((err, req, res, next) => {
+    console.error('Global error handler caught:', err.stack);
+    res.status(500).json({ message: 'Something went wrong on the server!' });
 });
 
+// --- Start Server (CRITICAL: Bind to 0.0.0.0) ---
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
 });
