@@ -19,13 +19,21 @@ connectDB(); // Connect to MongoDB
 // ── Middleware ────────────────────────────────────────────────
 
 // Allow React (port 3000) to call this server
-app.use(cors({
-origin:[
-'http://localhost:3000',
-'https://thefolio.vercel.app', 
-],
-credentials:true,
-}));
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'https://thefolio.vercel.app',
+    'https://thefolio-five.vercel.app',
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Parse incoming JSON request bodies
 app.use(express.json());
