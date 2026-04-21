@@ -1,0 +1,74 @@
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import LoadingScreen from './LoadingScreen';
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import AdminPage from './pages/AdminPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import './styles/App.css';
+
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  // Handle loading completion
+  const handleLoadingComplete = () => {
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  if (loading) {
+    return <LoadingScreen onComplete={handleLoadingComplete} />;
+  }
+
+  return (
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<Home toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+        <Route path="/about" element={<About toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+        <Route path="/contact" element={<Contact toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+        <Route path="/register" element={<Register toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+        <Route path="/login" element={<Login toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;
