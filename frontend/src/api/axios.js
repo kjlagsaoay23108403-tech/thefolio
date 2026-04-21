@@ -1,15 +1,18 @@
-// frontend/src/api/axios.js
 import axios from 'axios';
 
-const instance = axios.create({
-  // Uses REACT_APP_API_URL from .env or .env.production
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+// Use the production URL directly
+const API_URL = 'https://thefolio-jxpx.onrender.com/api';
+
+const API = axios.create({
+  baseURL: API_URL,
 });
 
-instance.interceptors.request.use((config) => {
+API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
-export default instance;
+export default API;
