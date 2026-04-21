@@ -82,7 +82,7 @@ const HomePage = ({ toggleDarkMode, darkMode }) => {
                 {post.image && (
                   <div className="post-image-wrapper">
                     <img
-                      src={`http://localhost:5000/uploads/${post.image}`}
+                      src={`${process.env.REACT_APP_API_URL?.replace('/api', '')}/uploads/${post.image}`}
                       alt={post.title || 'Post image'}
                       className="post-image"
                       onError={(e) => {

@@ -58,10 +58,9 @@ const ProfilePage = ({ toggleDarkMode, darkMode }) => {
     }
   };
 
-  const picSrc = user?.profilePic
-    ? `http://localhost:5000/uploads/${user.profilePic}`
-    : '/default-avatar.png';
-
+ const picSrc = user?.profilePic
+  ? `${process.env.REACT_APP_API_URL?.replace('/api', '')}/uploads/${user.profilePic}`
+  : '/default-avatar.png';
   return (
     <>
       <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
